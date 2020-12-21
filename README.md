@@ -117,18 +117,21 @@ RNCloudPayment.createCryptogram(demoCard.number, demoCard.extDate, demoCard.cvvC
 
 ### show3DS()
 Show 3ds secure.
-Returns a `Promise` that resolve cryptogram (`Object`).
+Returns a `Promise` that resolves to `null` on iOS and to `{ MD, PaRes }` on android.
+
+On iOS it is impossible to retrieve MD and PaRes, so you have to organize your own callback on your server that will catch those parameters.
 
 __Arguments__
 - `url` - `String` Url redirect.
 - `transactionId` - `String` Transaction ID.
 - `token` - `String` Token.
+- `termUrl` - `String` (required on iOS only, ignored on android) Url where to redirect with POST params `MD` and `PaRes` on iOS. 
 
 __Examples__
 ```js
 import RNCloudPayment from 'react-native-cloudpayments';
 
-RNCloudPayment.show3DS('https://demo.cloudpayments.ru', '1237618734', '....1d3d22r..')
+RNCloudPayment.show3DS('https://demo.cloudpayments.ru', '1237618734', '....1d3d22r..', 'https://your.api.com/post3ds')
   .then(result => {
     console.log(result); 
   });
