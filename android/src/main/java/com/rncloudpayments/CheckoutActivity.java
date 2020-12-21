@@ -1,7 +1,9 @@
 package com.rncloudpayments;
 
 import android.app.Activity;
-import android.app.FragmentManager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -11,7 +13,7 @@ import com.facebook.react.bridge.WritableMap;
 import ru.cloudpayments.sdk.three_ds.ThreeDSDialogListener;
 import ru.cloudpayments.sdk.three_ds.ThreeDsDialogFragment;
 
-public class CheckoutActivity extends Activity implements ThreeDSDialogListener {
+public class CheckoutActivity extends AppCompatActivity implements ThreeDSDialogListener {
 
     static String acsUrl;
     static String paReq;
@@ -22,10 +24,8 @@ public class CheckoutActivity extends Activity implements ThreeDSDialogListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FragmentManager fm = getFragmentManager();
-
         final ThreeDsDialogFragment dialog = ThreeDsDialogFragment.newInstance(acsUrl, transactionId, paReq);
-        dialog.show(fm, "3DS");
+        dialog.show(getSupportFragmentManager(), "3DS");
 
         new Handler().postDelayed(new Runnable() {
             @Override
