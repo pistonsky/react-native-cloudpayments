@@ -85,7 +85,7 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
     webViewController.m_delegate = self;
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:webViewController];
     dispatch_sync(dispatch_get_main_queue(), ^{
-        [self.navigationController.navigationBar setTranslucent:false];
+        [self.navigationController.navigationBar setTranslucent:true];
         [[self topViewController] presentViewController:self.navigationController animated:YES completion:nil];
     });
 }
@@ -98,11 +98,12 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
     NSString *urlString = request.URL.absoluteString;
 
     if ([urlString isEqualToString:self.termUrl]) {
+        self.resolveWebView(nil);
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
-- (void)webViewWillClose:(UIWebView *)webView {
+- (void)webViewDidClose:(WKWebView *)webView {
     self.rejectWebView(@"", @"", nil);
 }
 
