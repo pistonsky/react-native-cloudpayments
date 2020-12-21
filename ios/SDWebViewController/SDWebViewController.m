@@ -87,6 +87,10 @@
     
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    [_m_delegate webViewDidClose:(WKWebView *)self.m_webView];
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -174,7 +178,6 @@
 }
 
 - (void)onCloseAction:(__unused id)sender {
-    [_m_delegate webViewDidClose:(WKWebView *)self.m_webView];
     [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 

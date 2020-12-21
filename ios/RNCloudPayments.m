@@ -14,6 +14,7 @@ typedef void (^RCTPromiseRejectBlock)(NSString *code, NSString *message, NSError
 @property (nonatomic) RCTPromiseResolveBlock resolveWebView;
 @property (nonatomic) RCTPromiseRejectBlock rejectWebView;
 @property NSString* termUrl;
+@property BOOL didCallResolve;
 
 @end
 
@@ -83,6 +84,7 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
     // Show WebView
     SDWebViewController *webViewController = [[SDWebViewController alloc] initWithURL:url transactionId:transactionId token:token termUrl:termUrl];
     webViewController.m_delegate = self;
+    self.didCallResolve = false;
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:webViewController];
     dispatch_sync(dispatch_get_main_queue(), ^{
         [self.navigationController.navigationBar setTranslucent:true];
@@ -98,13 +100,16 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
     NSString *urlString = request.URL.absoluteString;
 
     if ([urlString isEqualToString:self.termUrl]) {
+        self.didCallResolve = true;
         self.resolveWebView(nil);
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
 - (void)webViewDidClose:(WKWebView *)webView {
-    self.rejectWebView(@"", @"", nil);
+    if (!self.didCallResolve) {
+        self.rejectWebView(@"", @"", nil);
+    }
 }
 
 #pragma MARK: - ViewController
