@@ -33,6 +33,7 @@
 @property (strong, nonatomic) NSString *m_initUrl;
 @property (strong, nonatomic) NSString *m_transactionId;
 @property (strong, nonatomic) NSString *m_token;
+@property (strong, nonatomic) NSString *m_termUrl;
 @property (strong, nonatomic) NSMutableDictionary *m_extraInfo;
 
 - (void)initWebView;
@@ -46,7 +47,7 @@
 
 #pragma mark -
 
-- (id)initWithURL:(id)url transactionId:(NSString *)transactionId token:(NSString *)token {
+- (id)initWithURL:(id)url transactionId:(NSString *)transactionId token:(NSString *)token termUrl:(NSString *)termUrl {
     self = [super init];
     if (!self) {
         return nil;
@@ -55,6 +56,7 @@
     self.m_initUrl = url;
     self.m_transactionId = transactionId;
     self.m_token = token;
+    self.m_termUrl = termUrl;
     
     
     if ([url isKindOfClass:[NSString class]]) {
@@ -112,7 +114,7 @@
     self.m_webView.navigationDelegate = self;
     [self.view addSubview:self.m_webView];
     
-    [self loadURL:self.m_initUrl transactionId:self.m_transactionId token:self.m_token];
+    [self loadURL:self.m_initUrl transactionId:self.m_transactionId token:self.m_token termUrl:self.m_termUrl];
 }
 
 - (void)updateDisplayTitle:(NSString *)nsTitle {
@@ -186,15 +188,15 @@
 }
 
 - (void) makeRequest {
-    NSString *postData = [NSString stringWithFormat: @"MD=%@&PaReq=%@&TermUrl=%@", self.m_token, self.m_transactionId, POST_BACK_URL];
+    NSString *postData = [NSString stringWithFormat: @"MD=%@&PaReq=%@&TermUrl=%@", self.m_token, self.m_transactionId, self.m_termUrl];
     NSString *urlString = @"https://demo.cloudpayments.ru/acs";
     NSString *jscript = [NSString stringWithFormat:@"post('%@', {%@});", urlString, postData];
     NSLog(@"Javascript: %@", jscript);
     [self.m_webView evaluateJavaScript:jscript completionHandler:nil];
 }
 
-- (void)loadURL:(NSString *)url transactionId:(NSString *)transactionId token:(NSString *)token {
-    NSString *body = [NSString stringWithFormat: @"MD=%@&PaReq=%@&TermUrl=%@", token, transactionId, POST_BACK_URL];
+- (void)loadURL:(NSString *)url transactionId:(NSString *)transactionId token:(NSString *)token termUrl:(NSString *)termUrl {
+    NSString *body = [NSString stringWithFormat: @"MD=%@&PaReq=%@&TermUrl=%@", token, transactionId, termUrl];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString: url]];
     [request setHTTPMethod: @"POST"];
     body = [body stringByURLEncoding];

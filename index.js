@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 const RNCloudPaymentsModule = NativeModules.RNCloudPayments;
 
@@ -12,11 +12,11 @@ export default class RNCloudPayments {
   }
 
   static async isValidExpired(cardExp) {
-	try {
-		return await RNCloudPaymentsModule.isValidExpired(cardExp);
-	} catch(error) {
-		return createError(error);
-	}
+    try {
+      return await RNCloudPaymentsModule.isValidExpired(cardExp);
+    } catch(error) {
+      return createError(error);
+    }
   }
 
   static async getType(cardNumber, cardExp, cardCvv) {
@@ -35,12 +35,16 @@ export default class RNCloudPayments {
     }
   }
 
-  static async show3DS(acsUrl, paReq, transactionId) {
-	try {
-		return await RNCloudPaymentsModule.show3DS(acsUrl, paReq, transactionId);
-	} catch(error) {
-		return createError(error);
-	}
+  static async show3DS(acsUrl, paReq, transactionId, termUrl) {
+    try {
+      if (Platform.OS === 'ios') {
+        return await RNCloudPaymentsModule.show3DS(acsUrl, paReq, transactionId, termUrl);
+      } else {
+        return await RNCloudPaymentsModule.show3DS(acsUrl, paReq, transactionId);
+      }
+    } catch(error) {
+      return createError(error);
+    }
   }
 }
 

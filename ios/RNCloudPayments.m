@@ -4,8 +4,6 @@
 #import "SDWebViewController/SDWebViewDelegate.h"
 #import "NSString+URLEncoding.h"
 
-#define POST_BACK_URL @"https://demo.cloudpayments.ru/WebFormPost/GetWebViewData"
-
 typedef void (^RCTPromiseResolveBlock)(id result);
 typedef void (^RCTPromiseRejectBlock)(NSString *code, NSString *message, NSError *error);
 
@@ -73,14 +71,16 @@ RCT_EXPORT_METHOD(createCryptogram: (NSString *)cardNumber
 RCT_EXPORT_METHOD(show3DS: (NSString *)url
                   transactionId: (NSString *)transactionId
                   token: (NSString *)token
+                  termUrl: (NSString *) termUrl
                   resolve: (RCTPromiseResolveBlock)resolve
                   reject: (RCTPromiseRejectBlock)reject)
 {
     self.resolveWebView = resolve;
     self.rejectWebView = reject;
+    self.termUrl = termUrl;
 
     // Show WebView
-    SDWebViewController *webViewController = [[SDWebViewController alloc] initWithURL:url transactionId:transactionId token:token];
+    SDWebViewController *webViewController = [[SDWebViewController alloc] initWithURL:url transactionId:transactionId token:token termUrl:termUrl];
     webViewController.m_delegate = self;
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:webViewController];
     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -91,21 +91,12 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
 
 #pragma MARK: - SDWebViewDelegate
 
-- (void)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (UIWebViewNavigationType)navigationType {
+- (void)webView:(WKWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (UIWebViewNavigationType)navigationType {
 
     // Detect url
     NSString *urlString = request.URL.absoluteString;
 
-    
-    if ([urlString isEqualToString:POST_BACK_URL]) {
-        NSString *result = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
-        NSString *mdString = [result stringBetweenString:@"MD=" andString:@"&PaRes"];
-        NSString *paResString = [[result stringBetweenString:@"PaRes=" andString:@"&MD"] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-
-        NSDictionary *dictionary = @{@"MD": mdString, @"PaRes": paResString};
-
-        self.resolveWebView(dictionary);
-
+    if ([urlString isEqualToString:self.termUrl]) {
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     }
 }
