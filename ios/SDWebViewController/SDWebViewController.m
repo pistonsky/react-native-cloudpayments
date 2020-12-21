@@ -164,7 +164,7 @@
 
 - (void)initNavigationBarItem {
     UIBarButtonItem *backItem =
-    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", nil)
+    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Отменить", nil)
                                      style:UIBarButtonItemStylePlain
                                     target:self
                                     action:@selector(onCloseAction:)];
