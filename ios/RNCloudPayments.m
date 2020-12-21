@@ -13,6 +13,7 @@ typedef void (^RCTPromiseRejectBlock)(NSString *code, NSString *message, NSError
 
 @property (nonatomic) RCTPromiseResolveBlock resolveWebView;
 @property (nonatomic) RCTPromiseRejectBlock rejectWebView;
+@property NSString* termUrl;
 
 @end
 
