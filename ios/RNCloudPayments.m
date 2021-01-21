@@ -109,6 +109,7 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
 - (void)webViewDidClose:(WKWebView *)webView {
     if (!self.didCallResolve) {
         self.rejectWebView(@"", @"", nil);
+        self.didCallResolve = true;
     }
 }
 
