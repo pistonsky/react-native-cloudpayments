@@ -13,7 +13,7 @@
 
 @optional
 - (void)webView:(WKWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (WKNavigationType)navigationType;
-- (void)webViewWillClose:(WKWebView *)webView;
+- (void)webViewDidClose:(WKWebView *)webView;
 - (void)onWebViewDidFinishLoad:(WKWebView *)webView;
 - (void)onWebViewDidStartLoad:(WKWebView *)webView;
 - (void)webViewFailToLoad:(NSError *)error;
